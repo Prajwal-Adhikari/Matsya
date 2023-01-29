@@ -1,6 +1,5 @@
 const { ethers } = require("hardhat");
 const { expect } = require("chai");
-const { toArray } = require("lodash");
 
 
 const tokens = (n) => {
