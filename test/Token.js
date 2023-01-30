@@ -3,44 +3,53 @@ const { expect } = require("chai");
 
 
 const tokens = (n) => {
-    return ethers.utils.parseUnits(n.toString(),"ether");
+    return ethers.utils.parseUnits(n.toString(), "ether");
 }
 
 describe("Token", () => {
-    let token;
+    let token, accounts, deployer;
 
     beforeEach(async () => {
         //Fetch token from the blockchain
         const Token = await ethers.getContractFactory("Token");
-        token = await Token.deploy("Chillar","CHIL","1000000");
+        token = await Token.deploy("Chillar", "CHIL", "1000000");
+
+        accounts = await ethers.getSigners();
+        deployer = accounts[0];
+
     })
 
-    describe('Deployment', () => { 
-    
-    const name = "Chillar";
-    const symbol = "CHIL";
-    const decimals = 18;
-    const totalSupply = tokens("1000000");
-    //correct name test
-    it("has correct name", async () => {
-        expect(await token.name()).to.equal(name);
-    })
+    describe('Deployment', () => {
 
-    //correct symbol check
-    it("should have correct symbol", async () => {
-        expect(await token.symbol()).to.equal(symbol);
-    })
+        const name = "Chillar";
+        const symbol = "CHIL";
+        const decimals = 18;
+        const totalSupply = tokens("1000000");
+        //correct name test
+        it("has correct name", async () => {
+            expect(await token.name()).to.equal(name);
+        })
 
-    //correct decimals check
-    it("should have 18 decimals", async () => {
-        expect(await token.decimals()).to.equal(decimals);
-    })
+        //correct symbol check
+        it("should have correct symbol", async () => {
+            expect(await token.symbol()).to.equal(symbol);
+        })
 
-    //correct totalSuppy check
-    it("has correct totalSupply",async ()=>{
-        expect(await token.totalSupply()).to.equal(totalSupply);
+        //correct decimals check
+        it("should have 18 decimals", async () => {
+            expect(await token.decimals()).to.equal(decimals);
+        })
+
+        //deployer balance check
+        it("Deployer should have all the initial supply", async () => {
+            expect(await token.balanceOf(deployer.address)).to.equal(totalSupply);
+        })
+
+        //correct totalSuppy check
+        it("has correct totalSupply", async () => {
+            expect(await token.totalSupply()).to.equal(totalSupply);
+        })
     })
-     })
 
 
 });
