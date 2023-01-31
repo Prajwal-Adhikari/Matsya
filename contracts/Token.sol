@@ -27,6 +27,7 @@ contract Token{
         
         //Check if the recepient is a valid address
         require(_to != address(0),"Cannot transfer token to an invalid address");
+        
         //Deduct transfer amount from the spender
         balanceOf[msg.sender] -= _value;
 
