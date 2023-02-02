@@ -31,4 +31,22 @@ describe('Exchange', () => {
 
   })
 
+
+  describe("Depositing token in the exchange", () => {
+
+    beforeEach(async() => {
+        //Approve 
+        //Deposite token
+    })
+
+    describe("Success", () => {
+
+    })
+
+    describe("Failure", () => {
+        
+    })
+
+  })
+
 })
