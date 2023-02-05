@@ -10,7 +10,7 @@ describe('Token', () => {
 
   beforeEach(async () => {
     const Token = await ethers.getContractFactory('Token')
-    token = await Token.deploy('Dapp University', 'DAPP', '1000000')
+    token = await Token.deploy('CHILLAR', '$CHILL', '1000000')
 
     accounts = await ethers.getSigners()
     deployer = accounts[0]
@@ -19,8 +19,8 @@ describe('Token', () => {
   })
 
   describe('Deployment', () => {
-    const name = 'Dapp University'
-    const symbol = 'DAPP'
+    const name = 'CHILLAR'
+    const symbol = '$CHILL'
     const decimals = '18'
     const totalSupply = tokens('1000000')
 
@@ -106,7 +106,7 @@ describe('Token', () => {
 
       it('emits an Approval event', async () => {
         const event = result.events[0]
-        expect(event.event).to.equal('Approve')
+        expect(event.event).to.equal('Approval')
 
         const args = event.args
         expect(args.owner).to.equal(deployer.address)
