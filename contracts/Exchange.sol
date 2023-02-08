@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-
 /**
  * @title Decentralized exchange
  * @author Prawjal Adhikari
@@ -26,14 +25,10 @@ contract Exchange {
     uint256 public feePercent;
     mapping(address => mapping(address => uint256)) public tokens;
     mapping(uint256 => _Order) public orders;
+    mapping(uint256 => bool) public orderCancelled;
     uint256 public orderCount;
 
-    event Deposit(
-        address token,
-        address user,
-        uint256 amount,
-        uint256 balance
-    );
+    event Deposit(address token, address user, uint256 amount, uint256 balance);
     event Withdraw(
         address token,
         address user,
@@ -41,6 +36,16 @@ contract Exchange {
         uint256 balance
     );
     event Order(
+        uint256 id,
+        address user,
+        address tokenGet,
+        uint256 amountGet,
+        address tokenGive,
+        uint256 amountGive,
+        uint256 timestamp
+    );
+
+    event Cancel(
         uint256 id,
         address user,
         address tokenGet,
@@ -65,7 +70,6 @@ contract Exchange {
         feeAccount = _feeAccount;
         feePercent = _feePercent;
     }
-
 
     // ------------------------
     // DEPOSIT & WITHDRAW TOKEN
@@ -95,14 +99,12 @@ contract Exchange {
         emit Withdraw(_token, msg.sender, _amount, tokens[_token][msg.sender]);
     }
 
-    function balanceOf(address _token, address _user)
-        public
-        view
-        returns (uint256)
-    {
+    function balanceOf(
+        address _token,
+        address _user
+    ) public view returns (uint256) {
         return tokens[_token][_user];
     }
-
 
     // ------------------------
     // MAKE & CANCEL ORDERS
@@ -139,4 +141,26 @@ contract Exchange {
         );
     }
 
+    function cancelOrder(uint256 _id) public {
+        //Fetch order
+        _Order storage _order = orders[_id];
+
+        //Order must exist
+        require(_order.id == _id, "Order doesnot exist.");
+        //Only owner can cancel his order
+        require(_order.user == msg.sender, "No permission to cancel");
+        //Cancel the order
+        orderCancelled[_id] = true;
+
+        //emit cancel event
+        emit Cancel(
+            _order.id,
+            msg.sender,
+            _order.tokenGet,
+            _order.amountGet,
+            _order.tokenGive,
+            _order.amountGive,
+            block.timestamp
+        );
+    }
 }
