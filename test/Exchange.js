@@ -15,7 +15,7 @@ describe('Exchange', () => {
     const Token = await ethers.getContractFactory('Token')
 
     token1 = await Token.deploy('CHILLAR', '$CHILL', '1000000')
-    token2 = await Token.deploy('Mock Dai', 'mDAI', '1000000')
+    token2 = await Token.deploy('TEST USDC', '$TUSDC', '1000000')
 
     accounts = await ethers.getSigners()
     deployer = accounts[0]
@@ -166,7 +166,7 @@ describe('Exchange', () => {
         result = await transaction.wait()
 
         // Make order
-        transaction = await exchange.connect(user1).Order(token2.address, amount, token1.address, amount)
+        transaction = await exchange.connect(user1).makeOrder(token2.address, amount, token1.address, amount)
         result = await transaction.wait()
       })
 
@@ -192,7 +192,7 @@ describe('Exchange', () => {
 
     describe('Failure', async () => {
       it('Rejects with no balance', async () => {
-        await expect(exchange.connect(user1).Order(token2.address, tokens(1), token1.address, tokens(1))).to.be.reverted
+        await expect(exchange.connect(user1).makeOrder(token2.address, tokens(1), token1.address, tokens(1))).to.be.reverted
       })
     })
   })

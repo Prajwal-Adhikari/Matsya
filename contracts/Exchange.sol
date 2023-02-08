@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "hardhat/console.sol";
-import "./Token.sol";
+
 
 /**
  * @title Decentralized exchange
@@ -19,6 +18,9 @@ import "./Token.sol";
  *
  */
 
+import "hardhat/console.sol";
+import "./Token.sol";
+
 contract Exchange {
     address public feeAccount;
     uint256 public feePercent;
@@ -26,7 +28,12 @@ contract Exchange {
     mapping(uint256 => _Order) public orders;
     uint256 public orderCount;
 
-    event Deposit(address token, address user, uint256 amount, uint256 balance);
+    event Deposit(
+        address token,
+        address user,
+        uint256 amount,
+        uint256 balance
+    );
     event Withdraw(
         address token,
         address user,
@@ -44,14 +51,14 @@ contract Exchange {
     );
 
     struct _Order {
-        //Attributes of an order
-        uint256 id; //Uniquie identifier for an order in the blockchain
-        address user; //User who placed the order
+        // Attributes of an order
+        uint256 id; // Unique identifier for order
+        address user; // User who made order
         address tokenGet; // Address of the token they receive
-        uint256 amountGet; // Amount of the token they receive
-        address tokenGive; // Address of the token they give
-        uint256 amountGive; // Amount of the token they give
-        uint256 timestamp; // Time when the order was placed
+        uint256 amountGet; // Amount they receive
+        address tokenGive; // Address of token they give
+        uint256 amountGive; // Amount they give
+        uint256 timestamp; // When order was created
     }
 
     constructor(address _feeAccount, uint256 _feePercent) {
@@ -59,7 +66,10 @@ contract Exchange {
         feePercent = _feePercent;
     }
 
-    ///Deposit
+
+    // ------------------------
+    // DEPOSIT & WITHDRAW TOKEN
+
     function depositToken(address _token, uint256 _amount) public {
         // Transfer tokens to exchange
         require(Token(_token).transferFrom(msg.sender, address(this), _amount));
@@ -71,56 +81,53 @@ contract Exchange {
         emit Deposit(_token, msg.sender, _amount, tokens[_token][msg.sender]);
     }
 
-    //Withdraw
-    function WithdrawToken(address _token, uint256 _amount) public {
-        //Ensure user has enough tokens to withdraw
+    function withdrawToken(address _token, uint256 _amount) public {
+        // Ensure user has enough tokens to withdraw
         require(tokens[_token][msg.sender] >= _amount);
 
-        //Transfer token to user
+        // Transfer tokens to user
         Token(_token).transfer(msg.sender, _amount);
 
-        //Update user balance
+        // Update user balance
         tokens[_token][msg.sender] = tokens[_token][msg.sender] - _amount;
 
-        //emit an withdraw event
+        // Emit event
         emit Withdraw(_token, msg.sender, _amount, tokens[_token][msg.sender]);
     }
 
-    function balanceOf(
-        address _token,
-        address _user
-    ) public view returns (uint256) {
+    function balanceOf(address _token, address _user)
+        public
+        view
+        returns (uint256)
+    {
         return tokens[_token][_user];
     }
 
-    //MAKE AND CANCEL ORDERS
 
-    /**  @dev Token Give : the token the trader wants to give; which token and how much
-     *        Token Get : the token the trader wants to get; which token and how much
-     
-*/
-    function placeOrder(
+    // ------------------------
+    // MAKE & CANCEL ORDERS
+    function makeOrder(
         address _tokenGet,
         uint256 _amountGet,
         address _tokenGive,
         uint256 _amountGive
     ) public {
-        require(
-            balanceOf(_tokenGive, msg.sender) >= _amountGive,
-            "Insufficient token amount to place an order"
-        );
+        // Prevent orders if tokens aren't on exchange
+        require(balanceOf(_tokenGive, msg.sender) >= _amountGive);
 
+        // Instantiate a new order
         orderCount = orderCount + 1;
         orders[orderCount] = _Order(
-            orderCount, //id
-            msg.sender, //user
-            _tokenGet, //tokenGet
-            _amountGet, //amountGet
-            _tokenGive, //tokenGive
-            _amountGive, //amountGive
-            block.timestamp //timestamp
+            orderCount,
+            msg.sender,
+            _tokenGet,
+            _amountGet,
+            _tokenGive,
+            _amountGive,
+            block.timestamp
         );
 
+        // Emit event
         emit Order(
             orderCount,
             msg.sender,
@@ -131,4 +138,5 @@ contract Exchange {
             block.timestamp
         );
     }
+
 }
