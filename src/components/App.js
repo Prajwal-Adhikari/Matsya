@@ -1,66 +1,64 @@
 import { useEffect } from 'react';
 import { ethers } from 'ethers';
+import config from '../config.json';
+import TOKEN_ABI from '../abis/Token.json';
 import '../App.css';
-import config from "../config.json"
-import TOKEN_ABI from "../abis/Token.json";
 
 
 function App() {
 
   const loadBlockchainData = async () => {
-    const accounts = await window.ethereum.request({method : "eth_requestAccounts"});
-    console.log(accounts[0]);
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    console.log(accounts[0])
 
-    //Connect Ethers to blockchain
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const { chainId } = await provider.getNetwork();
-    console.log(chainId);
+    // Connect Ethers to blockchain
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const { chainId } = await provider.getNetwork()
+    console.log(`Chain id is ${chainId}`)  
 
-    //Token Smart Contract
-    const token = new ethers.Contract(config[chainId].Chillar.address,TOKEN_ABI,provider);
-    console.log(token.address);
-
-    const symbol = await token.symbol();
-    console.log(symbol);
+    // Token Smart Contract
+    const token = new ethers.Contract(config[chainId].Chillar.address, TOKEN_ABI, provider)
+    const symbol = await token.symbol()
+    console.log(token.address)
+    console.log(symbol)
   }
 
-  useEffect(()=>{
-    loadBlockchainData();
+  useEffect(() => {
+    loadBlockchainData()
   })
 
   return (
     <div>
 
-    {/* Navbar */}
+      {/* Navbar */}
 
-    <main className='exchange grid'>
-      <section className='exchange__section--left grid'>
+      <main className='exchange grid'>
+        <section className='exchange__section--left grid'>
 
-        {/* Markets */}
+          {/* Markets */}
 
-        {/* Balance */}
+          {/* Balance */}
 
-        {/* Order */}
+          {/* Order */}
 
-      </section>
-      <section className='exchange__section--right grid'>
+        </section>
+        <section className='exchange__section--right grid'>
 
-        {/* PriceChart */}
+          {/* PriceChart */}
 
-        {/* Transactions */}
+          {/* Transactions */}
 
-        {/* Trades */}
+          {/* Trades */}
 
-        {/* OrderBook */}
+          {/* OrderBook */}
 
-      </section>
-    </main>
+        </section>
+      </main>
 
-    {/* Alert */}
+      {/* Alert */}
 
-  </div>
+    </div>
   );
 }
 
 export default App;
- 
