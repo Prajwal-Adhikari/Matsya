@@ -14,12 +14,12 @@ function App() {
     // Connect Ethers to blockchain
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const { chainId } = await provider.getNetwork()
-    console.log(`Chain id is ${chainId}`)  
+    console.log(chainId)
 
     // Token Smart Contract
     const token = new ethers.Contract(config[chainId].Chillar.address, TOKEN_ABI, provider)
-    const symbol = await token.symbol()
     console.log(token.address)
+    const symbol = await token.symbol()
     console.log(symbol)
   }
 
