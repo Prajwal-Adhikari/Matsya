@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { loadProvider, loadNetwork, loadAccounts, loadTokens, loadExchange } from '../store/interactions';
+import { loadProvider, loadNetwork, loadAccount, loadTokens, loadExchange } from '../store/interactions';
 import config from '../config.json';
 import '../App.css';
 
+import Navbar from "./Navbar";
 
 function App() {
 
@@ -16,7 +17,10 @@ function App() {
     const provider = loadProvider(dispatch);
     const chainId = await loadNetwork(provider, dispatch);
 
-    await loadAccounts(provider, dispatch);
+    // await loadAccount(provider, dispatch);
+    window.ethereum.on('accountsChanged',() => {
+      loadAccount(provider, dispatch);     
+    })
 
     // Token Smart Contract
     const Chillar = config[chainId].Chillar;
@@ -37,6 +41,7 @@ function App() {
     <div>
 
       {/* Navbar */}
+      <Navbar />
 
       <main className='exchange grid'>
         <section className='exchange__section--left grid'>
