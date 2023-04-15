@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { loadProvider, loadNetwork, loadAccounts, loadToken } from '../store/interactions';
+import { loadProvider, loadNetwork, loadAccounts, loadTokens, loadExchange } from '../store/interactions';
 import config from '../config.json';
 import '../App.css';
 
@@ -10,14 +10,23 @@ function App() {
   const dispatch = useDispatch();
   const loadBlockchainData = async () => {
 
-    await loadAccounts(dispatch);
+
 
     // Connect Ethers to blockchain
     const provider = loadProvider(dispatch);
     const chainId = await loadNetwork(provider, dispatch);
 
+    await loadAccounts(provider, dispatch);
+
     // Token Smart Contract
-    await loadToken(provider, config[chainId].Chillar.address, dispatch);
+    const Chillar = config[chainId].Chillar;
+    const Sukka = config[chainId].Sukka;
+
+    await loadTokens(provider, [Sukka.address, Chillar.address], dispatch);
+
+    //Load exchange
+    const exchangeConfig = config[chainId].Exchange;
+    await loadExchange(provider, exchangeConfig.address, dispatch);
   }
 
   useEffect(() => {
