@@ -5,6 +5,7 @@ import config from '../config.json';
 import '../App.css';
 
 import Navbar from "./Navbar";
+import Markets from './Markets';
 
 function App() {
 
@@ -53,6 +54,7 @@ function App() {
         <section className='exchange__section--left grid'>
 
           {/* Markets */}
+          <Markets />
 
           {/* Balance */}
 
